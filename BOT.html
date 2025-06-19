@@ -118,6 +118,7 @@
     let currentNode = null;
     let codeInputPhase = true;
     let currentCode = "";
+    let previousHeight = window.innerHeight;
 
     function showMessage(text, isUser = false) {
       const chat = document.getElementById("chatWindow");
@@ -151,7 +152,7 @@
       }
 
       chat.appendChild(msgWrapper);
-      chat.scrollTop = chat.scrollHeight; // 기본 스크롤
+      chat.scrollTop = chat.scrollHeight;
     }
 
     function showQuestion(id) {
@@ -212,8 +213,19 @@
       if (e.key === "Enter") handleSend();
     });
 
-    // 초기 안내
+    // 시작 안내
     showMessage("🔐 코드 6자리를 입력하세요.");
+
+    // 키보드 감지 → 아래로 강제 스크롤
+    window.addEventListener("resize", () => {
+      const currentHeight = window.innerHeight;
+      const isKeyboardOpen = currentHeight < previousHeight;
+      if (isKeyboardOpen) {
+        const chat = document.getElementById("chatWindow");
+        chat.scrollTop = chat.scrollHeight;
+      }
+      previousHeight = currentHeight;
+    });
   </script>
 </body>
 </html>
