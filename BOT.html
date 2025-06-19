@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>장애처리 봇</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      background-color: #c7dbe6;
+      margin: 0;
+      padding: 0;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .message {
+      display: flex;
+      margin: 10px 0;
+      align-items: flex-start;
+    }
+
+    .message.bot {
+      justify-content: flex-start;
+    }
+
+    .message.user {
+      justify-content: flex-end;
+    }
+
+    .bubble {
+      max-width: 100%;
+      padding: 10px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+      white-space: pre-line;
+      background-color: #ffffff;
+      color: #000;
+    }
+
+    .bot .bubble {
+      border-top-left-radius: 0;
+    }
+
+    .user .bubble {
+      border-top-right-radius: 0;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .name {
+      font-size: 12px;
+      color: #444;
+      margin-bottom: 2px;
+      margin-left: 4px;
+    }
+
+    .input-area {
+      padding: 10px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      background: #fff;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .input-area button {
+      margin-left: 10px;
+      padding: 0 18px;
+      border: none;
+      background-color: #007AFF;
+      color: white;
+      font-weight: bold;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatWindow"></div>
+    <div class="input-area">
+      <input id="input" type="text" placeholder="번호 입력..." />
+      <button onclick="handleSend()">전송</button>
+    </div>
+  </div>
+
+  <script>
+    let chatData = [];
+    let currentNode = null;
+
+    function showMessage(text, isUser = false) {
+      const chat = document.getElementById("chatWindow");
+      const msgWrapper = document.createElement("div");
+      msgWrapper.className = "message " + (isUser ? "user" : "bot");
+
+      if (!isUser) {
+        const avatar = document.createElement("img");
+        avatar.className = "avatar";
+        avatar.src = "profile.png";
+
+        const content = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = "장애처리 봇";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text.replace(/\\n/g, "<br>");
+
+        content.appendChild(name);
+        content.appendChild(bubble);
+        msgWrapper.appendChild(avatar);
+        msgWrapper.appendChild(content);
+      } else {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text.replace(/\\n/g, "<br>");
+        msgWrapper.appendChild(bubble);
+      }
+
+      chat.appendChild(msgWrapper);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    function showQuestion(id) {
+      currentNode = chatData.find(d => d.ID === id);
+      if (!currentNode) return;
+
+      showMessage(currentNode.질문내용);
+
+      if (currentNode.선택지 && currentNode.선택지.length > 0) {
+        const optionsText = currentNode.선택지
+          .map(opt => `${opt.번호}. ${opt.내용}`)
+          .join("\\n");
+        showMessage(optionsText);
+      }
+    }
+
+    function handleSend() {
+      const input = document.getElementById("input");
+      const val = input.value.trim();
+      if (!val || !currentNode) return;
+
+      showMessage(val, true);
+      const next = currentNode.선택지.find(opt => opt.번호 === val);
+      if (next) {
+        if (next.다음ID === "END") {
+          showMessage("감사합니다!");
+        } else {
+          showQuestion(next.다음ID);
+        }
+      } else {
+        showMessage("올바른 번호를 입력해주세요.");
+      }
+      input.value = "";
+    }
+
+    document.getElementById("input").addEventListener("keydown", e => {
+      if (e.key === "Enter") handleSend();
+    });
+
+    fetch("data.json")
+      .then(res => res.json())
+      .then(data => {
+        chatData = data;
+        showQuestion("Q1");
+      });
+  </script>
+</body>
+</html>
