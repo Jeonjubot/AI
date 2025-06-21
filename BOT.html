@@ -90,7 +90,7 @@
   <div class="chat-container">
     <div class="chat-box" id="chatWindow"></div>
     <div class="input-area">
-      <input id="input" type="text" placeholder="메시지 입력" />
+      <input id="input" type="text" placeholder="번호 입력..." />
       <button onclick="handleSend()">전송</button>
     </div>
   </div>  <script>
@@ -130,8 +130,20 @@
       chat.scrollTop = chat.scrollHeight;
     }
 
-    async function showImageFirst(imageName) {
-      const imagePath = `./이미지/${currentCode}/${imageName}.png`;
+    async function showImageFirst(imageName, text = "") {
+  const imagePath = `./이미지/${currentCode}/${imageName}.png`;
+  try {
+    const res = await fetch(imagePath);
+    if (res.ok) {
+      const combined = text
+        ? `<img src="${imagePath}" style="max-width:100%; border-radius:12px;"><br>${text}`
+        : `<img src="${imagePath}" style="max-width:100%; border-radius:12px;">`;
+      showMessage(combined);
+      return true;
+    }
+  } catch {}
+  return false;
+}/${imageName}.png`;
       try {
         const res = await fetch(imagePath);
         if (res.ok) {
@@ -145,8 +157,12 @@
       currentNode = chatData.find(d => d.ID === id);
       if (!currentNode) return;
 
-      if (currentNode.이미지) await showImageFirst(currentNode.이미지);
-      showMessage(currentNode.질문내용);
+      if (currentNode.이미지) {
+  const shown = await showImageFirst(currentNode.이미지, currentNode.질문내용);
+  if (!shown) showMessage(currentNode.질문내용);
+} else {
+  showMessage(currentNode.질문내용);
+}
 
       if (currentNode.선택지 && currentNode.선택지.length > 0) {
         const optionsText = currentNode.선택지.map(opt => `${opt.번호}. ${opt.내용}`).join("\n");
@@ -196,8 +212,12 @@
 
       const next = currentNode.선택지.find(opt => opt.번호 === val);
       if (next) {
-        if (next.이미지) await showImageFirst(next.이미지);
-        showMessage(next.내용);
+        if (next.이미지) {
+  const shown = await showImageFirst(next.이미지, next.내용);
+  if (!shown) showMessage(next.내용);
+} else {
+  showMessage(next.내용);
+}
 
         if (next.다음ID === "END") {
           showMessage("감사합니다!");
