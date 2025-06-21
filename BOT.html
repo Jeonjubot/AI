@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>KT MOS 남부</title>
+  <style>
+    body {
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      background-color: #c7dbe6;
+      margin: 0;
+      padding: 0;
+      font-size: 17px;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 504px;
+      margin: 0 auto;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    .message {
+      display: flex;
+      margin: 12px 0;
+      align-items: flex-start;
+    }
+    .message.bot {
+      justify-content: flex-start;
+    }
+    .message.user {
+      justify-content: flex-end;
+    }
+    .bubble {
+      max-width: 100%;
+      padding: 12px 17px;
+      border-radius: 24px;
+      font-size: 17px;
+      line-height: 1.5;
+      white-space: pre-line;
+      background-color: #ffffff;
+      color: #000;
+    }
+    .bot .bubble { border-top-left-radius: 0; }
+    .user .bubble { border-top-right-radius: 0; }
+    .avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .name {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 3px;
+      margin-left: 5px;
+    }
+    .input-area {
+      padding: 12px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      background: #fff;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 12px;
+      font-size: 17px;
+      border: 1px solid #ccc;
+      border-radius: 24px;
+      outline: none;
+    }
+    .input-area button {
+      margin-left: 12px;
+      padding: 0 21px;
+      border: none;
+      background-color: #007AFF;
+      color: white;
+      font-weight: bold;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 17px;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatWindow"></div>
+    <div class="input-area">
+      <input id="input" type="text" placeholder="번호 입력..." />
+      <button onclick="handleSend()">전송</button>
+    </div>
+  </div>
+
+  <script>
+    let chatData = [], currentNode = null, codeInputPhase = true, currentCode = "", previousHeight = window.innerHeight;
+
+    function showMessage(text, isUser = false) {
+      const chat = document.getElementById("chatWindow");
+      const msgWrapper = document.createElement("div");
+      msgWrapper.className = "message " + (isUser ? "user" : "bot");
+
+      if (!isUser) {
+        const avatar = document.createElement("img");
+        avatar.className = "avatar";
+        avatar.src = "./이미지/profile.png";
+
+        const content = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "name";
+        name.textContent = "KT MOS 남부";
+
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text.replace(/\n/g, "<br>");
+
+        content.appendChild(name);
+        content.appendChild(bubble);
+        msgWrapper.appendChild(avatar);
+        msgWrapper.appendChild(content);
+      } else {
+        const bubble = document.createElement("div");
+        bubble.className = "bubble";
+        bubble.innerHTML = text.replace(/\n/g, "<br>");
+        msgWrapper.appendChild(bubble);
+      }
+
+      chat.appendChild(msgWrapper);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function showImageFirst(imageName) {
+      const imagePath = `./이미지/${currentCode}/${imageName}.png`;
+      try {
+        const res = await fetch(imagePath);
+        if (res.ok) {
+          const imgTag = `<img src="${imagePath}" style="max-width:100%; border-radius:12px;">`;
+          showMessage(imgTag);
+        }
+      } catch {}
+    }
+
+    async function showQuestion(id) {
+      currentNode = chatData.find(d => d.ID === id);
+      if (!currentNode) return;
+
+      if (currentNode.이미지) await showImageFirst(currentNode.이미지);
+      showMessage(currentNode.질문내용);
+
+      if (currentNode.선택지 && currentNode.선택지.length > 0) {
+        const optionsText = currentNode.선택지.map(opt => `${opt.번호}. ${opt.내용}`).join("\n");
+        showMessage(optionsText);
+      }
+    }
+
+    async function handleSend() {
+      const input = document.getElementById("input");
+      const val = input.value.trim();
+      if (!val) return;
+
+      showMessage(val, true);
+      input.value = "";
+
+      if (codeInputPhase) {
+        currentCode = val;
+        try {
+          const res = await fetch(`./코드/${currentCode}.json`);
+          if (!res.ok) throw new Error("Not found");
+          chatData = await res.json();
+          codeInputPhase = false;
+          showQuestion("Q1");
+        } catch {
+          showMessage("❌ 존재하지 않는 코드입니다. 다시 입력해주세요.");
+        }
+        return;
+      }
+
+      const number = parseInt(val, 10);
+      const isImageTarget = isNaN(number) || number > 20;
+      let imageShown = false;
+
+      if (isImageTarget) {
+        const imagePath = `./이미지/${currentCode}/${val}.png`;
+        try {
+          const res = await fetch(imagePath);
+          if (res.ok) {
+            const imgTag = `<img src="${imagePath}" style="max-width:100%; border-radius:12px;">`;
+            showMessage(imgTag);
+            imageShown = true;
+          }
+        } catch {}
+      }
+
+      if (!currentNode) return;
+
+      const next = currentNode.선택지.find(opt => opt.번호 === val);
+      if (next) {
+        if (next.이미지) await showImageFirst(next.이미지);
+        showMessage(next.내용);
+
+        if (next.다음ID === "END") {
+          showMessage("감사합니다!");
+        } else {
+          showQuestion(next.다음ID);
+        }
+      } else if (!imageShown) {
+        showMessage("올바른 번호를 입력해주세요.");
+      }
+    }
+
+    document.getElementById("input").addEventListener("keydown", e => {
+      if (e.key === "Enter") handleSend();
+    });
+
+    showMessage("🏘 지역코드를 입력하세요.\n(임시코드: 000000)\n\n🖼 이미지 답변 기능\n예) 봇, 명함, 전주\n(지역코드 입력 후 사용 가능)\n\n💻 Developer\n호남본부 업무효율화TF\n✏️ Planner\n전주운용팀 오용수");
+
+    window.addEventListener("resize", () => {
+      const currentHeight = window.innerHeight;
+      if (currentHeight < previousHeight) {
+        document.getElementById("chatWindow").scrollTop = chat.scrollHeight;
+      }
+      previousHeight = currentHeight;
+    });
+  </script>
+</body>
+</html>
