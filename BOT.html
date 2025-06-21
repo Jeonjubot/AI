@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="ko">
+<!DOCTYPE html>
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
@@ -90,10 +91,12 @@
   <div class="chat-container">
     <div class="chat-box" id="chatWindow"></div>
     <div class="input-area">
-      <input id="input" type="text" placeholder="번호 입력..." />
+      <input id="input" type="text" placeholder="메시지 입력" />
       <button onclick="handleSend()">전송</button>
     </div>
-  </div>  <script>
+  </div>
+
+  <script>
     let chatData = [], currentNode = null, codeInputPhase = true, currentCode = "", previousHeight = window.innerHeight;
 
     function showMessage(text, isUser = false) {
@@ -243,5 +246,6 @@
       }
       previousHeight = currentHeight;
     });
-  </script></body>
+  </script>
+</body>
 </html>
