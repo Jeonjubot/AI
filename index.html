@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta property="og:image" content="./이미지/profile.png" />
+  <title>KT MOS 남부</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-box" id="chatWindow"></div>
+    <div class="input-area">
+      <input id="input" type="text" placeholder="메시지 입력" />
+      <button onclick="handleSend()" class="send-button">
+        <img src="./이미지/send.png" alt="전송" />
+      </button>
+    </div>
+  </div>
+
+<script src="bot.js"></script>
+</body>
+</html>
