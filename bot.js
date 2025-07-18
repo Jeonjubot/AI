@@ -344,7 +344,6 @@ if (nextId === "END2") {
       if (!res.ok) throw new Error("지역코드 데이터 없음");
       chatData = await res.json();
 
-      showMessage("🙂 안녕하세요. 고객님!!\n😘 고객 중심의 서비스와\n😎 혁신을 선도하는 파트너\n😊 KT MOS 남부입니다.");
       await new Promise(resolve => setTimeout(resolve, 800));
       showQuestion("Q1");
     } catch {
