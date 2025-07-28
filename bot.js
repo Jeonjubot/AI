@@ -333,7 +333,7 @@ if (nextId === "예비1") {
 } else if (nextId === "END2") {
   window.location.href = `sms:01000000000?body=${encodeURIComponent("기술TT 관련 문의드립니다.")}`;
 } else if (nextId === "END1") {
-  window.location.href = "tel:01000000000";
+  window.location.href = "tel:*12345678#";
 }
 
   } catch (err) {
