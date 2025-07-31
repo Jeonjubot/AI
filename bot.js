@@ -377,10 +377,10 @@ document.addEventListener("DOMContentLoaded", () => {
   for (let i = 0; i < numCoins; i++) {
     const coin = document.createElement('div');
     coin.classList.add('emoji');
-    coin.textContent = '1등하고 싶어요';
+    coin.textContent = '📡';
     coin.style.left = `${Math.random() * 100}vw`;
     coin.style.animationDuration = `${2 + Math.random() * 3}s`;
-    coin.style.fontSize = `${1 + Math.random() * 2}rem`;
+    coin.style.fontSize = `${1}rem`;
     document.body.appendChild(coin);
   }
 });
