@@ -292,7 +292,7 @@ if (nextId === "고장1") {
 } else if (nextId === "철거1") {
   window.location.href = `sms:01000000000?body=${encodeURIComponent("중계기 철거 관련 엔지니어 방문 요청드립니다.")}`;
 } else if (nextId === "철거2") {
-  window.location.href = `sms:01000000000?body=${encodeURIComponent("중계기 철거 관련 비대면으로 요청드립니다.")}`;
+  window.location.href = `sms:01096186487?body=${encodeURIComponent("중계기 철거 관련 비대면으로 요청드립니다.")}`;
 } else if (nextId === "END2") {
   window.location.href = `sms:01000000000?body=${encodeURIComponent("기술TT 관련 문의드립니다.")}`;
 } else if (nextId === "END1") {
