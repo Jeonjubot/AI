@@ -373,12 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") handleSend();
   });
 
-  let coinSpawned = false;
-
-  function spawnCoinsOnce() {
-    if (coinSpawned) return;
-    coinSpawned = true;
-
+  function spawnCoins() {
     const numCoins = 5;
     for (let i = 0; i < numCoins; i++) {
       const coin = document.createElement('div');
@@ -397,6 +392,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  document.addEventListener("click", spawnCoinsOnce);
-  document.addEventListener("keydown", spawnCoinsOnce);
+  document.addEventListener("click", spawnCoins);
 });
