@@ -373,7 +373,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") handleSend();
   });
 
-  const numCoins = 1;
+  const numCoins = 5;
   for (let i = 0; i < numCoins; i++) {
     const coin = document.createElement('div');
     coin.classList.add('emoji');
