@@ -274,7 +274,7 @@ body {
   position: absolute;
   top: -50px;
   font-size: 2rem;
-  animation: fall linear infinite;
+  animation: fall 3s linear forwards; /* 3초 동안 한 번만 실행 */
   color: gold;
   user-select: none;
   pointer-events: none;
