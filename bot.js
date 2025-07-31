@@ -373,14 +373,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "Enter") handleSend();
   });
 
-  const numCoins = 5;
-  for (let i = 0; i < numCoins; i++) {
-    const coin = document.createElement('div');
-    coin.classList.add('emoji');
-    coin.textContent = '📡';
-    coin.style.left = `${Math.random() * 100}vw`;
-    coin.style.animationDuration = `${2 + Math.random() * 3}s`;
-    coin.style.fontSize = `${1}rem`;
-    document.body.appendChild(coin);
+  // 이미 실행되었는지 추적하는 플래그
+  let coinSpawned = false;
+
+  function spawnCoinsOnce() {
+    if (coinSpawned) return; // 이미 실행했으면 무시
+    coinSpawned = true;
+
+    const numCoins = 5;
+    for (let i = 0; i < numCoins; i++) {
+      const coin = document.createElement('div');
+      coin.classList.add('emoji');
+      coin.textContent = '📡';
+      coin.style.left = `${Math.random() * 100}vw`;
+      coin.style.animationDuration = `${2 + Math.random() * 3}s`;
+      coin.style.fontSize = `${1}rem`;
+      document.body.appendChild(coin);
+    }
   }
+
+  // 클릭이나 키 입력 중 하나라도 발생하면 실행
+  document.addEventListener("click", spawnCoinsOnce);
+  document.addEventListener("keydown", spawnCoinsOnce);
 });
