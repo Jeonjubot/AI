@@ -374,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function spawnCoins() {
-  const icons = ['📡', '🛸', '🚀', '🌍', '🛰️'];
+  const icons = ['📡', '🛸', '🚀', '🌍', '🛰️', '⭐️'];
 
   icons.forEach(icon => {
     const coin = document.createElement('div');
