@@ -374,23 +374,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function spawnCoins() {
-    const numCoins = 5;
-    for (let i = 0; i < numCoins; i++) {
-      const coin = document.createElement('div');
-      coin.classList.add('emoji');
-      coin.textContent = '📡';
-      coin.style.left = `${Math.random() * 100}vw`;
-      coin.style.animationDuration = `${2 + Math.random() * 2}s`;
-      coin.style.fontSize = `2rem`;
+  const icons = ['📡', '📡', '📡', '🛰️', '🛰️'];
 
-      // 애니메이션 끝나면 제거
-      coin.addEventListener('animationend', () => {
-        coin.remove();
-      });
+  icons.forEach(icon => {
+    const coin = document.createElement('div');
+    coin.classList.add('emoji');
+    coin.textContent = icon;
+    coin.style.left = `${Math.random() * 100}vw`;
+    coin.style.animationDuration = `${2 + Math.random() * 2}s`;
+    coin.style.fontSize = `2rem`;
 
-      document.body.appendChild(coin);
-    }
-  }
+    coin.addEventListener('animationend', () => {
+      coin.remove();
+    });
+
+    document.body.appendChild(coin);
+  });
+}
 
   document.addEventListener("click", spawnCoins);
 });
